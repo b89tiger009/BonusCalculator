@@ -209,18 +209,16 @@
                 <span class="result-value" id="res-grade">-</span>
             </div>
             <div class="result-row">
-                <span class="result-label">獎金基數</span>
-                <span class="result-value" id="res-base" style="color: var(--primary-color); font-size: 18px;">-</span>
-            </div>
-            <div class="result-row">
                 <span class="result-label">預估考績獎金</span>
                 <span class="result-total" id="res-amount">$0</span>
             </div>
         </div>
 
-        <div class="motivation-box" id="motivation-card">
-            <div class="motivation-title">💡 主管寄語與激勵方針</div>
-            <div class="motivation-text" id="motivation-content"></div>
+        <div class="max-motivation">
+            <div class="motivation-box" id="motivation-card">
+                <div class="motivation-title">💡 主管寄語與激勵方針</div>
+                <div class="motivation-text" id="motivation-content"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -253,7 +251,6 @@
         
         if (isNaN(score) || score < 0) {
             document.getElementById('res-grade').innerText = '-';
-            document.getElementById('res-base').innerText = '-';
             document.getElementById('res-amount').innerText = '$0';
             document.getElementById('motivation-card').classList.remove('active');
             return;
@@ -261,16 +258,13 @@
 
         let matched = null;
         
-        // 級距邊界處理
         if (score >= 95) {
             matched = rules[0]; 
         } else if (score <= 79) {
             matched = rules[rules.length - 1]; 
         } else {
-            // 精確匹配或向下尋找最近的級距
             matched = rules.find(r => r.score === score);
             if (!matched) {
-                // 若輸入無對應分數（如91分），自動向下採計最近的下限級距
                 for(let i=0; i<rules.length; i++) {
                     if (score > rules[i].score) {
                         matched = rules[i];
@@ -283,9 +277,8 @@
         if (matched) {
             const bonusAmount = Math.round(salary * matched.base);
 
-            // 更新結果介面
+            // 更新結果介面（已隱藏基數顯示）
             document.getElementById('res-grade').innerText = `【${matched.grade} 等】`;
-            document.getElementById('res-base').innerText = `${matched.base.toFixed(2)} 個月`;
             document.getElementById('res-amount').innerText = `$${bonusAmount.toLocaleString()}`;
             
             // 更新激勵話語
@@ -299,7 +292,7 @@
         }
     }
 
-    // 初始化試算一次
+    // 初始化試算
     calculateBonus();
 </script>
 
